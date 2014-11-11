@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Projet Gestion d'Objets Connectés</title>
+        <link rel="stylesheet" href="css/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/css/fileinput.css">
+        <link rel="stylesheet" href="css/css/style.css">
+    </head>
+    <body ng-app="PGOC" ng-controller="pgocCtrl">
+        <!-- --------------------------------Barre de Navigation---------------------------- -->
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <span class="navbar-brand">Suivi Des Tables</span>
+                </div>
+                <!-- <div class="navbar-collapse collapse">
+                                        <ul class="nav navbar-nav">
+                                                <li class="{{item.class}}" ng-repeat="item in menu" ng-class="{active : item == itemcourant}">
+                                                <a ng-click="selectItem(item)" href="#{{item.nom}}">{{item.nom}}</a></li>
+                    </div> -->
+                    <div class="navbar-collapse collapse"  ng-init=" tab = 1">
+                        <ul class="nav navbar-nav">
+                            <li  ng-class="{ active:tab === 1 }"><a ng-click="tab = 1;tableselect = null" href>Vue d'ensemble</a></li>
+                            <li  ng-class="{ active:tab === 2 }"><a ng-click="tab = 2;tableselect = null" href>Gestion des Tables</a></li>
+                            <li  ng-class="{ active:tab === 3 }"><a ng-click="tab = 3;tableselect = null" href>Gestion des Boissons</a></li>
+                            <li  ng-class="{ active:tab === 4 }"><a ng-click="tab = 4;tableselect = null" href>Gestion des Lieux</a></li>
+                            <li  ng-class="{ active:tab === 5 }"><a ng-click="tab = 5;tableselect = null" href>Gestion des Utilisateurs</a></li>
+                        </div>
+                    </nav>
+                    <!-- --------------------------------Barre de Navigation---------------------------- -->
+                    <!-- --------------------------------Table des Tables------------------------------ -->
+                    <!-- <section ng-init="tab=1"> -->
+
+
+                    <div class="panel" ng-show="tab ===1">
+                        <div class="container" ng-show="tableselect == null">
+                            <div class="spacer input-group">
+                                <div class="input-group-addon">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </div>
+                                <input type="text" ng-model="recherche" class="form-control" placeholder="Rechercher Une Table..."/>
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" ng-click="initrech()">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <table class="table table table-striped table-hover spacer">
+                                <thead>
+                                    <tr class="clickable">
+                                        <th class="colico"></th>
+                                        <th class="colnom">
+                                            <a ng-click="triepar('nom')">Nom</a>
+                                        </th>
+                                        <th class="col"><a>Lieu</a></th>
+                                        <th class="col"><a>Contenu Des Fûts</a></th>
+                                        <th class="coletat"><a ng-click="triepar('etat')">Etat Courant</a></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="t in tables |filter:recherche| orderBy:champtri:tridescendant" class="clickable" ng-click="selecttable(t)">
+                                        <td><img src="img/table.ico" alt="Table" width="20px" height="20px"></td>
+                                        <td>{{t.nom}}</td>
+                                        <td>{{t.lieu.nom}}</td>
+                                        <td>
+                                            <span ng-repeat="f in t.fut.boisson">-&nbsp{{f.fabricant}}</br></span>
+                                        </td>
+                                        <td>
+                                            <span ng-if="t.etat == 'FREE'" class="label label-success">{{t.etat}}</span>
+                                            <span ng-if="t.etat == 'TAG'" class="label label-info">{{t.etat}}</span>
+                                            <span ng-if="t.etat == 'DISCONNECTED'" class="label label-danger">{{t.etat}}</span>
+                                            <span ng-if="t.etat == 'OFF'" class="label label-warning">{{t.etat}}</span>
+                                        </td >
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                            <div class="alert alert-info">Nombre Total Des Tables : {{(tables |filter:recherche).length}}</div>
+                        </div>
+                    </div>
+                    <!-- </section> -->
+                    <!-- --------------------------------Table des Tables----------------------------------- -->
+                    <!-- --------------------------------Affichage Des Détails------------------------------ -->
+                    <div class="container">
+                        <div  ng-show="tableselect != null">
+                            <table class="table table table-striped table-hover spacer">
+                                <thead>
+                                    <tr>
+                                        <th>Type De Boisons</th>
+                                        <th>Volume Restant</th>
+                                        <th>Image De Fond</th>
+                                        <th>Nombre De Clients</th>
+                                        <th>Volume Servi /30 Jours</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span ng-repeat="f in tableselect.fut.boisson">-&nbsp{{f.type}}</br></span></td>
+                                        <td>{{tableselect.fut.volume}}/20L</td>
+                                        <td><img src="{{tableselect.fond}}" alt=""></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="well">
+                            <h4>Plus de détails</h4>
+                            
+                            <ul class="list-group">
+                                <li class="list-group-item"><b>Numéro de la table :&nbsp</b><i> {{tableselect.id}}</i>
+                                <li class="list-group-item"><b>Adresse MAC :&nbsp</b><i>{{tableselect.mac}}</i>
+                                <li class="list-group-item"><b>Adresse du lieu :&nbsp</b><i>{{tableselect.lieu.adresse}}</i>
+                                <li class="list-group-item"><b>Longitude :&nbsp</b><i>{{tableselect.lieu.longitude}}</i>
+                                <li class="list-group-item"><b>Latitude :&nbsp</b><i>{{tableselect.lieu.latitude}}</i>
+                                
+                                
+                            </ul>
+                            
+                            
+
+                            </div>
+                            <a href="#" class="btn btn-block btn-primary" ng-click="tableselect = null">Retour à La Vue D'ensemble</a>
+                            <!-- javascript:history.go(0) -->
+                        </div>
+                    </div>
+                    <!-- --------------------------------Affichage Des Détails------------------------------ -->
+                    <!-- --------------------------------Gestion des Tables------------------------------ -->
+                    <div class="panel" ng-show="tab ===2">
+                        <div class="container">
+                            <table class="table table table-striped table-hover spacer">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nom</th>
+                                        <th>MAC</th>
+                                        <th>Etat</th>
+                                        <th>Changer l'etat</th>
+                                        <th>Image De Fond</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="t in tables"  ng-click="">
+
+                                        <td>{{t.id}}</td>
+                                        <td>{{t.nom}}</td>
+                                        <td>{{t.mac}}</td>
+                                        <td>
+                                            <span ng-if="t.etat == 'FREE'" class="label label-success">{{t.etat}}</span>
+                                            <span ng-if="t.etat == 'TAG'" class="label label-info">{{t.etat}}</span>
+                                            <span ng-if="t.etat == 'DISCONNECTED'" class="label label-danger">{{t.etat}}</span>
+                                            <span ng-if="t.etat == 'OFF'" class="label label-warning">{{t.etat}}</span>
+
+                                            <td>
+                                            <select class="btn dropdown-toggle selectpicker btn-default" >
+                                                <option ng-repeat="t in tables" value="{{t.etat}}">{{t.etat}}</option>
+                                            </select>
+                                            </td>
+                                        </td>
+                                        <td>
+                                            <img src="{{t.fond}}" alt="" width="20px" height="20px">
+                                            <!-- --------------------------Btn Browse------------------------ -->
+                                            <div class="btn btn-primary btn-file">
+                                                <i class="glyphicon glyphicon-folder-open"></i> &nbsp;Browse … <input id="input-1" type="file" class="file">
+                                             </div>
+                                            <!-- --------------------------Btn Browse------------------------ -->
+                                        </td>
+                                        <td><button class="btn btn-success" type="button">Valider</button></td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="well">
+
+                            </div>
+                            <div class="alert alert-info">Nombre Total Des Tables : {{tables.length}}</div>
+                            <!-- --------------------------------------Upload------------------------------ -->
+                           
+                            <!-- --------------------------------------Upload------------------------------ -->
+                        </div>
+                    </div>
+                    <!-- --------------------------------Gestion des Tables------------------------------ -->
+                    <!-- --------------------------------Gestion des Boissons------------------------------ -->
+                    <div class="panel" ng-show="tab ===3">
+                        <div class="container">
+                            <table class="table table table-striped table-hover spacer">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Fabricant</th>
+                                        <th>Type</th>
+                                        <th>Logo</th>
+                                        <th>Descriptif</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="b in Boissons" class="clickable" ng-click="">
+
+                                        <td>{{b.id}}</td>
+                                        <td>{{b.fabricant}}</td>
+                                        <td>{{b.type}}</td>
+                                        <td><img src="{{b.logo}}" width="30px" height="40"></td>
+                                        <td>{{b.descriptif}}</td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="well">
+
+                            </div>
+                            <div class="alert alert-info">Nombre Total Des Boissons : {{Boissons.length}}</div>
+                        </div>
+                    </div>
+                    <!-- --------------------------------Gestion des Boissons------------------------------ -->
+                    <!-- --------------------------------Gestion des Lieux------------------------------ -->
+                    <div class="panel" ng-show="tab ===4">
+                        <div class="container">
+                            <table class="table table table-striped table-hover spacer">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nom</th>
+                                        <th>Adresse</th>
+                                        <th>Latitude</th>
+                                        <th>Longitude</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="l in lieux" class="clickable" ng-click="selecttable(t)">
+
+                                        <td>{{l.id}}</td>
+                                        <td>{{l.nom}}</td>
+                                        <td>{{l.adresse}}</td>
+                                        <td>{{l.latitude}}</td>
+                                        <td>{{l.longitude}}</td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="well">
+
+                            </div>
+                            <div class="alert alert-info">Nombre Total Des lieux : {{lieux.length}}</div>
+                        </div>
+                    </div>
+                    <!-- --------------------------------Gestion des Lieux------------------------------ -->
+                    <!-- --------------------------------Gestion des Utilisateurs------------------------------ -->
+                    <div class="panel" ng-show="tab ===5">
+                        <div class="container">
+                            <table class="table table table-striped table-hover spacer">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nom</th>
+                                        <th>Crédit Courant</th>
+                                        <th>Langue Par Defaut</th>
+                                        <th>Liste Des Consommations</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="u in Utilisateurs" class="clickable" ng-click="">
+
+                                        <td>{{u.id}}</td>
+                                        <td>{{u.nom}}</td>
+                                        <td>{{u.credit_courant}}</td>
+                                        <td>{{u.langue_defaut}}</td>
+                                        <td>{{u.liste_consommation}}</td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="well">
+
+                            </div>
+                            <div class="alert alert-info">Nombre Total Des Utilisateurs : {{Utilisateurs.length}}</div>
+                        </div>
+                    </div>
+                    <!-- --------------------------------Gestion des Utilisateurs------------------------------ -->
+                    <script src="js/angular.min.js" type="text/javascript"></script>
+                    <script src="js/app.js" type="text/javascript"></script>
+                </body>
+            </html>

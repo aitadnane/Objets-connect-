@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Projet Gestion d'Objets Connectés</title>
+        <link rel="stylesheet" href="css/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/css/style.css">
+        
+    </head>
+    <body ng-app="PGOC" ng-controller="pgocCtrl">
+        <!-- --------------------------------Barre de Navigation---------------------------- -->
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <span class="navbar-brand">Suivi Des Tables</span>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                    <li class="{{item.class}}" ng-repeat="item in menu" ng-class="{active : item == itemcourant}"><a ng-click="selectItem(item)" href="#">{{item.nom}}</a></li>
+                      
+                    </div>
+                </div>
+            </nav>
+        <!-- --------------------------------Barre de Navigation---------------------------- -->
+        <!-- --------------------------------Table des Tables------------------------------ -->
+            <div class="container" ng-show="tableselect == null">
+        	
+            <table class="table table table-striped table-hover spacer">
+                <thead>
+                    <tr class="clickable">
+                        <th></th>
+                        <th>Nom</th>
+                        <th>Lieu</th>
+                        <th>Contenu Des Fûts</th>
+                        <th>Etat Courant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                	<tr ng-repeat="t in tables" class="clickable" ng-click="selecttable(t)">
+                		<td><img src="img/table.ico" alt="Table" width="20px" height="20px"></td>
+                		<td>{{t.nom}}</td>
+                        <td>{{t.lieu.nom}}</td>
+                        <td></td>
+                        <td>
+                        	<span ng-if="t.etat == 'FREE'" class="label label-success">{{t.etat}}</span>
+                        	<span ng-if="t.etat == 'TAG'" class="label label-info">{{t.etat}}</span>
+                        	<span ng-if="t.etat == 'DISCONNECTED'" class="label label-danger">{{t.etat}}</span>
+                        	<span ng-if="t.etat == 'OFF'" class="label label-warning">{{t.etat}}</span>
+                        </td >
+                	</tr>
+                </tbody>
+            </table>
+            <div class="alert alert-info">Nombre Total Des Tables : {{tables.length}}</div>
+            </div>
+            
+        <!-- --------------------------------Table des Tables----------------------------------- -->
+        <!-- --------------------------------Affichage Des Détails------------------------------ -->
+        <div class="container">
+        <div  ng-show="tableselect != null">
+        	<table class="table table table-striped table-hover spacer">
+        		<thead>
+        			<tr>
+        				<th>Type De Boisons</th>
+        				<th>Volume Restant</th>
+        				<th>Image De Fond</th>
+        				<th>Nombre De Clients</th>
+        				<th>Volume Servi /30 Jours</th>
+        				
+        			</tr>
+        		</thead>
+        		<tbody>
+        			<tr>
+        				<td>{{tableselect.fut.boisson.type}}</td>
+        				<td>{{tableselect.fut.volume}}/20L</td>
+        				<td><img src="{{tableselect.fond}}" alt=""></td>
+        				<td></td>
+        				<td></td>
+        			</tr>
+        		</tbody>
+        	</table>
+        	<a href="javascript:history.go(0)" class="btn btn-block btn-primary">Retour à La Vue D'ensemble</a>
+
+        </div>
+        </div>
+        <!-- --------------------------------Affichage Des Détails------------------------------ -->
+        
+		<script src="js/angular.min.js" type="text/javascript"></script>
+        <script src="js/app.js" type="text/javascript"></script>
+        </body>
+    </html>
